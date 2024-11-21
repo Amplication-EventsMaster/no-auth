@@ -11,7 +11,7 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, MaxLength, IsOptional } from "class-validator";
+import { IsString, IsOptional } from "class-validator";
 
 @InputType()
 class CustomerCreateInput {
@@ -20,7 +20,6 @@ class CustomerCreateInput {
     type: String,
   })
   @IsString()
-  @MaxLength(1000)
   @IsOptional()
   @Field(() => String, {
     nullable: true,
