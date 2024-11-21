@@ -18,19 +18,18 @@ import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
 import { CustomerService } from "../customer.service";
 import { CustomerCreateInput } from "./CustomerCreateInput";
-import { Customer } from "./Customer";
-import { CustomerFindManyArgs } from "./CustomerFindManyArgs";
+import { CustomerWhereInput } from "./CustomerWhereInput";
 import { CustomerWhereUniqueInput } from "./CustomerWhereUniqueInput";
+import { CustomerFindManyArgs } from "./CustomerFindManyArgs";
 import { CustomerUpdateInput } from "./CustomerUpdateInput";
+import { Customer } from "./Customer";
 
 export class CustomerControllerBase {
   constructor(protected readonly service: CustomerService) {}
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Customer })
-  async createCustomer(
-    @common.Body() data: CustomerCreateInput
-  ): Promise<Customer> {
-    return await this.service.createCustomer({
+  async create(@common.Body() data: CustomerCreateInput): Promise<Customer> {
+    return await this.service.create({
       data: data,
       select: {
         createdAt: true,
@@ -44,9 +43,9 @@ export class CustomerControllerBase {
   @common.Get()
   @swagger.ApiOkResponse({ type: [Customer] })
   @ApiNestedQuery(CustomerFindManyArgs)
-  async customers(@common.Req() request: Request): Promise<Customer[]> {
+  async findMany(@common.Req() request: Request): Promise<Customer[]> {
     const args = plainToClass(CustomerFindManyArgs, request.query);
-    return this.service.customers({
+    return this.service.findMany({
       ...args,
       select: {
         createdAt: true,
@@ -60,10 +59,10 @@ export class CustomerControllerBase {
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Customer })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
-  async customer(
+  async findOne(
     @common.Param() params: CustomerWhereUniqueInput
   ): Promise<Customer | null> {
-    const result = await this.service.customer({
+    const result = await this.service.findOne({
       where: params,
       select: {
         createdAt: true,
@@ -83,12 +82,12 @@ export class CustomerControllerBase {
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Customer })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
-  async updateCustomer(
+  async update(
     @common.Param() params: CustomerWhereUniqueInput,
     @common.Body() data: CustomerUpdateInput
   ): Promise<Customer | null> {
     try {
-      return await this.service.updateCustomer({
+      return await this.service.update({
         where: params,
         data: data,
         select: {
@@ -111,11 +110,11 @@ export class CustomerControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Customer })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
-  async deleteCustomer(
+  async delete(
     @common.Param() params: CustomerWhereUniqueInput
   ): Promise<Customer | null> {
     try {
-      return await this.service.deleteCustomer({
+      return await this.service.delete({
         where: params,
         select: {
           createdAt: true,
